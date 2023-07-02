@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 /// Select Whatsapp Type
-enum Package { whatsapp, businessWhatsapp }
+enum Package { whatsapp, businessWhatsapp, twitter, facebook }
 
 class WhatsappShare {
   static const MethodChannel _channel = MethodChannel('whatsapp_share');
@@ -18,7 +18,8 @@ class WhatsappShare {
   /// return true if installed otherwise false.
   static Future<bool?> isInstalled({Package package = Package.whatsapp}) async {
     String _package;
-    _package = package.index == 0 ? "com.whatsapp" : "com.whatsapp.w4b";
+    _package = getPackageName(
+        package); //package.index == 0 ? "com.whatsapp" : "com.whatsapp.w4b";
     final bool? success =
         await _channel.invokeMethod('isInstalled', <String, dynamic>{
       "package": _package,
@@ -40,9 +41,10 @@ class WhatsappShare {
     assert(phone.isNotEmpty);
 
     String _package;
-    _package = package.index == 0 ? "com.whatsapp" : "com.whatsapp.w4b";
+    _package = getPackageName(package);
 
-    final bool? success = await _channel.invokeMethod('share', <String, dynamic>{
+    final bool? success =
+        await _channel.invokeMethod('share', <String, dynamic>{
       'title': ' ',
       'text': text,
       'linkUrl': linkUrl,
@@ -65,16 +67,16 @@ class WhatsappShare {
     Package package = Package.whatsapp,
   }) async {
     assert(filePath.isNotEmpty);
-    assert( phone.isNotEmpty);
-  
-    if ( filePath.isEmpty) {
+    assert(phone.isNotEmpty);
+
+    if (filePath.isEmpty) {
       throw FlutterError('FilePath cannot be Empty');
     } else if (phone.isEmpty) {
       throw FlutterError('Phone cannot be Empty');
     }
 
     String _package;
-    _package = package.index == 0 ? "com.whatsapp" : "com.whatsapp.w4b";
+    _package = getPackageName(package);
 
     final bool? success =
         await _channel.invokeMethod('shareFile', <String, dynamic>{
@@ -87,5 +89,18 @@ class WhatsappShare {
     });
 
     return success;
+  }
+
+  static String getPackageName(Package package) {
+    switch (package) {
+      case Package.whatsapp:
+        return "com.whatsapp";
+      case Package.businessWhatsapp:
+        return "com.whatsapp.w4b";
+      case Package.twitter:
+        return "com.twitter.android";
+      case Package.facebook:
+        return "com.facebook.katana";
+    }
   }
 }
