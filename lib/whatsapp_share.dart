@@ -63,6 +63,8 @@ class WhatsappShare {
   static Future<bool?> shareFile({
     required List<String> filePath,
     required String phone,
+    @Deprecated(
+        "No support for text along with files, this field is ignored")
     String? text,
     Package package = Package.whatsapp,
   }) async {
@@ -81,7 +83,7 @@ class WhatsappShare {
     final bool? success =
         await _channel.invokeMethod('shareFile', <String, dynamic>{
       'title': ' ',
-      'text': text,
+      'text': ' ',
       'filePath': filePath,
       'chooserTitle': ' ',
       'phone': phone,

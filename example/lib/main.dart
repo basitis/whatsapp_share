@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -33,8 +34,8 @@ class MyApp extends StatelessWidget {
       directory = await getApplicationDocumentsDirectory();
     }
     debugPrint('${directory?.path} / ${_image?.path}');
+
     await WhatsappShare.shareFile(
-      text: 'Whatsapp message text',
       phone: '911234567890',
       filePath: ["${_image?.path}"],
     );
@@ -52,17 +53,18 @@ class MyApp extends StatelessWidget {
     } else {
       directory = await getApplicationDocumentsDirectory();
     }
-    final String localPath =
-        '${directory?.path}/${DateTime.now().toIso8601String()}.png';
 
-    await _controller.captureAndSave(localPath);
+    final String? localPath =
+        await _controller.captureAndSave(directory!.path);
 
-    await Future.delayed(Duration(seconds: 1));
+    await Future.delayed(const Duration(seconds: 1));
+    if (localPath == null) {
+      log("localPath is null");
+    }
 
     await WhatsappShare.shareFile(
-      text: 'Whatsapp message text',
       phone: '911234567890',
-      filePath: [localPath],
+      filePath: [localPath!],
     );
   }
 
@@ -81,20 +83,20 @@ class MyApp extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 ElevatedButton(
-                  child: Text('Share text and link'),
                   onPressed: share,
+                  child: const Text('Share text and link'),
                 ),
                 ElevatedButton(
-                  child: Text('Share Image'),
                   onPressed: shareFile,
+                  child: const Text('Share Image'),
                 ),
                 ElevatedButton(
-                  child: Text('Share screenshot'),
                   onPressed: shareScreenShot,
+                  child: const Text('Share screenshot'),
                 ),
                 ElevatedButton(
-                  child: Text('is Installed'),
                   onPressed: isInstalled,
+                  child: const Text('is Installed'),
                 ),
               ],
             ),
@@ -107,20 +109,15 @@ class MyApp extends StatelessWidget {
   ///Pick Image From gallery using image_picker plugin
   Future getImage() async {
     try {
-      XFile? _pickedFile =
+      XFile? pickedFile =
           // ignore: deprecated_member_use
           await ImagePicker().pickImage(source: ImageSource.gallery);
 
-      if (_pickedFile != null) {
-        // getting a directory path for saving
-        final directory = await getExternalStorageDirectory();
-
-        // copy the file to a new path
-        // _image = await _pickedFile.copy('${directory?.path}/image1.png');
-        _image = File(_pickedFile.path);
-      } else {} 
+      if (pickedFile != null) {
+        _image = File(pickedFile.path);
+      } else {}
     } catch (er) {
-      print(er);
+      log(er.toString());
     }
   }
 }
