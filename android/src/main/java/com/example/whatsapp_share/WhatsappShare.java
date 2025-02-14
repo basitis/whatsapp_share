@@ -12,6 +12,7 @@ import androidx.core.content.FileProvider;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Objects;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.BinaryMessenger;
@@ -19,7 +20,6 @@ import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
-import io.flutter.plugin.common.PluginRegistry.Registrar;
 
 
 /** WhatsappShare */
@@ -28,13 +28,6 @@ public class WhatsappShare implements FlutterPlugin, MethodCallHandler {
     private MethodChannel methodChannel;
 
     public WhatsappShare() {}
-
-    /** Plugin registration. */
-    @SuppressWarnings("deprecation")
-    public static void registerWith(io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
-        final WhatsappShare instance = new WhatsappShare();
-        instance.onAttachedToEngine(registrar.context(), registrar.messenger());
-    }
 
     @Override
     public void onAttachedToEngine(FlutterPluginBinding binding) {
@@ -48,14 +41,14 @@ public class WhatsappShare implements FlutterPlugin, MethodCallHandler {
     }
 
     @Override
-    public void onDetachedFromEngine(FlutterPluginBinding binding) {
+    public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
         context = null;
         methodChannel.setMethodCallHandler(null);
         methodChannel = null;
     }
 
     @Override
-    public void onMethodCall(MethodCall call, Result result) {
+    public void onMethodCall(MethodCall call, @NonNull Result result) {
         if (call.method.equals("shareFile")) {
             shareFile(call, result);
         } else if (call.method.equals("share")) {
@@ -97,7 +90,7 @@ public class WhatsappShare implements FlutterPlugin, MethodCallHandler {
         catch (Exception ex)
         {
             Log.println(Log.ERROR, "", "FlutterShare: Error");
-            result.error(ex.getMessage(), null, null);
+            result.error(Objects.requireNonNull(ex.getMessage()), null, null);
         }
     }
 
@@ -162,13 +155,13 @@ public class WhatsappShare implements FlutterPlugin, MethodCallHandler {
         catch (Exception ex)
         {
             Log.println(Log.ERROR, "", "FlutterShare: Error");
-            result.error(ex.getMessage(), null, null);
+            result.error(Objects.requireNonNull(ex.getMessage()), null, null);
         }
     }
 
     private void shareFile(MethodCall call, Result result) {
-        ArrayList<String> filePaths = new ArrayList<String>();
-        ArrayList<Uri> files = new ArrayList<Uri>();
+        ArrayList<String> filePaths;
+        ArrayList<Uri> files = new ArrayList<>();
         try
         {
             String title = call.argument("title");
@@ -221,7 +214,7 @@ public class WhatsappShare implements FlutterPlugin, MethodCallHandler {
         }
         catch (Exception ex)
         {
-            result.error(ex.getMessage(), null, null);
+            result.error(Objects.requireNonNull(ex.getMessage()), null, null);
             Log.println(Log.ERROR, "", "FlutterShare: Error");
         }
     }
