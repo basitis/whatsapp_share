@@ -70,9 +70,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Whatsapp Share'),
-        ),
+        appBar: AppBar(title: const Text('Whatsapp Share')),
         body: Center(
           child: Screenshot(
             controller: _controller,
@@ -81,20 +79,20 @@ class MyApp extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 ElevatedButton(
-                  child: Text('Share text and link'),
                   onPressed: share,
+                  child: Text('Share text and link'),
                 ),
                 ElevatedButton(
-                  child: Text('Share Image'),
                   onPressed: shareFile,
+                  child: Text('Share Image'),
                 ),
                 ElevatedButton(
-                  child: Text('Share screenshot'),
                   onPressed: shareScreenShot,
+                  child: Text('Share screenshot'),
                 ),
                 ElevatedButton(
-                  child: Text('is Installed'),
                   onPressed: isInstalled,
+                  child: Text('is Installed'),
                 ),
               ],
             ),
@@ -108,8 +106,8 @@ class MyApp extends StatelessWidget {
   Future getImage() async {
     try {
       XFile? _pickedFile =
-          // ignore: deprecated_member_use
-          await ImagePicker().pickImage(source: ImageSource.gallery);
+      // ignore: deprecated_member_use
+      await ImagePicker().pickImage(source: ImageSource.gallery);
 
       if (_pickedFile != null) {
         // getting a directory path for saving
@@ -118,7 +116,7 @@ class MyApp extends StatelessWidget {
         // copy the file to a new path
         // _image = await _pickedFile.copy('${directory?.path}/image1.png');
         _image = File(_pickedFile.path);
-      } else {} 
+      } else {}
     } catch (er) {
       print(er);
     }

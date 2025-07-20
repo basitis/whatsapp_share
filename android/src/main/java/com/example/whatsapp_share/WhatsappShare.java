@@ -3,7 +3,9 @@ package com.example.whatsapp_share;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.pm.PackageInfo;
 import android.net.Uri;
+import android.os.Build;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -63,7 +65,11 @@ public class WhatsappShare implements FlutterPlugin, MethodCallHandler {
     private boolean isPackageInstalled(String packageName, PackageManager packageManager) {
          try
         {
-            packageManager.getPackageInfo(packageName, 0);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                packageManager.getPackageInfo(packageName, PackageManager.PackageInfoFlags.of(0));
+            } else {
+                packageManager.getPackageInfo(packageName, 0);
+            }
             return true;
         }
         catch (PackageManager.NameNotFoundException e) {
@@ -194,15 +200,21 @@ public class WhatsappShare implements FlutterPlugin, MethodCallHandler {
             }
 
             Intent intent = new Intent();
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent.setAction(Intent.ACTION_SEND_MULTIPLE);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            
+            if (files.size() == 1) {
+                intent.setAction(Intent.ACTION_SEND);
+                intent.putExtra(Intent.EXTRA_STREAM, files.get(0));
+            } else {
+                intent.setAction(Intent.ACTION_SEND_MULTIPLE);
+                intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, files);
+            }
+            
             intent.setType("*/*");
             intent.setPackage(packageName);
-            intent.putExtra("jid",phone + "@s.whatsapp.net");
+            intent.putExtra("jid", phone + "@s.whatsapp.net");
             intent.putExtra(Intent.EXTRA_SUBJECT, title);
             intent.putExtra(Intent.EXTRA_TEXT, text);
-            intent.putExtra(Intent.EXTRA_STREAM, files);
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
             //Intent chooserIntent = Intent.createChooser(intent, chooserTitle);

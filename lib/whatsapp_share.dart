@@ -19,11 +19,12 @@ class WhatsappShare {
   static Future<bool?> isInstalled({Package package = Package.whatsapp}) async {
     String _package;
     _package = getPackageName(
-        package); //package.index == 0 ? "com.whatsapp" : "com.whatsapp.w4b";
-    final bool? success =
-        await _channel.invokeMethod('isInstalled', <String, dynamic>{
-      "package": _package,
-    });
+      package,
+    ); //package.index == 0 ? "com.whatsapp" : "com.whatsapp.w4b";
+    final bool? success = await _channel.invokeMethod(
+      'isInstalled',
+      <String, dynamic>{"package": _package},
+    );
     return success;
   }
 
@@ -43,15 +44,15 @@ class WhatsappShare {
     String _package;
     _package = getPackageName(package);
 
-    final bool? success =
-        await _channel.invokeMethod('share', <String, dynamic>{
-      'title': ' ',
-      'text': text,
-      'linkUrl': linkUrl,
-      'chooserTitle': ' ',
-      'phone': phone,
-      'package': _package,
-    });
+    final bool? success = await _channel
+        .invokeMethod('share', <String, dynamic>{
+          'title': ' ',
+          'text': text,
+          'linkUrl': linkUrl,
+          'chooserTitle': ' ',
+          'phone': phone,
+          'package': _package,
+        });
 
     return success;
   }
@@ -78,15 +79,15 @@ class WhatsappShare {
     String _package;
     _package = getPackageName(package);
 
-    final bool? success =
-        await _channel.invokeMethod('shareFile', <String, dynamic>{
-      'title': ' ',
-      'text': text,
-      'filePath': filePath,
-      'chooserTitle': ' ',
-      'phone': phone,
-      'package': _package,
-    });
+    final bool? success = await _channel
+        .invokeMethod('shareFile', <String, dynamic>{
+          'title': ' ',
+          'text': text,
+          'filePath': filePath,
+          'chooserTitle': ' ',
+          'phone': phone,
+          'package': _package,
+        });
 
     return success;
   }
